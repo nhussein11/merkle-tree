@@ -66,7 +66,6 @@ mod tests {
         assert!(!MerkleTree::verify(&items, merkle_tree.root_hash()));
     }
 
-
     #[test]
     fn get_merkle_tree_proof_by_leave_index() {
         let items = vec![
