@@ -20,13 +20,10 @@ impl MerkleTree {
         let input = pair_off_tree(input);
         let levels = input.len().trailing_zeros() as usize;
 
-        let mut leaves = input
-            .iter()
-            .map(hash_data)
-            .collect::<Vec<Hash>>();
+        let mut leaves = input.iter().map(hash_data).collect::<Vec<Hash>>();
 
         let mut nodes = leaves.clone();
-       
+
         for level in 0..levels {
             leaves = leaves
                 .chunks(2)
@@ -36,13 +33,9 @@ impl MerkleTree {
             nodes.extend(leaves.clone());
         }
 
-
-        MerkleTree {
-            nodes,
-            levels
-        }
+        MerkleTree { nodes, levels }
     }
-    
+
     /// Check if the given data produces the given root hash
     pub fn verify(input: &[Data], root: Hash) -> bool {
         let merkle_tree = MerkleTree::construct_by_input(input);
@@ -64,11 +57,7 @@ impl MerkleTree {
         let mut index = index;
 
         for level in 0..self.levels {
-            let sibling_index = if index % 2 == 0 {
-                index + 1
-            } else {
-                index - 1
-            };
+            let sibling_index = if index % 2 == 0 { index + 1 } else { index - 1 };
 
             proof.push(self.nodes[sibling_index].clone());
             index = index / 2;
@@ -120,11 +109,10 @@ fn pair_off_tree(input: &[Data]) -> Vec<Data> {
 }
 /// Hashes the given data using sha256
 fn hash_data(data: &Data) -> Hash {
-    sha2::Sha256::digest(data).to_vec() 
+    sha2::Sha256::digest(data).to_vec()
 }
 /// Concatenates the given hashes and returns the hash of the concatenated data
 fn concatenate_hashes(left: Hash, right: Hash) -> Hash {
     let parent_hash = [left, right].concat();
     hash_data(&parent_hash)
 }
-
