@@ -9,7 +9,7 @@ pub struct MerkleTree {
     levels: usize,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Error {
     InvalidLeafIndex,
 }
@@ -78,13 +78,23 @@ impl MerkleTree {
     }
 
     /// Returns the merkle proof for the given data
-    pub fn get_merkle_proof_by_data(data: Hash) {
-        todo!()
+    pub fn get_merkle_proof_by_data(&self, data: Hash) -> Result<Vec<Hash>, Error> {
+        let data_hashed = hash_data(&data);
+        self.leaves()
+            .iter()
+            .position(|leaf| leaf == &data_hashed)
+            .map(|index| self.get_merkle_proof_by_leaf_index(index))
+            .unwrap_or(Err(Error::InvalidLeafIndex))
     }
 
     /// Get number of leaves in the MerkleTree
     pub fn get_number_of_leaves(&self) -> usize {
         2i32.pow(self.levels as u32).try_into().unwrap()
+    }
+
+    /// Get leaves of the MerkleTree
+    pub fn leaves(&self) -> &[Hash] {
+        &self.nodes[0..self.get_number_of_leaves()]
     }
 }
 
