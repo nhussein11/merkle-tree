@@ -16,7 +16,7 @@ Each item in the set is hashed and stored in a leaf node. The leaf nodes are the
 
 A Merkle tree totals all transactions in a block and generates a digital fingerprint of the entire set of operations, allowing the user to verify whether it includes a transaction in the block.
 
-![Merkle tree working](https://www.simplilearn.com/ice9/free_resources_article_thumb/Merkle_Tree_In_Blockchain_3.png)
+![Merkle tree working](https://www.simplilearn.com/ice9/free_resources_article_thumb/Merkle_Tree_In_Blockchain_4.png)
 
 ## How to run the tests?
 
