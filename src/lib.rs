@@ -10,6 +10,7 @@ pub struct MerkleTree {
 }
 
 impl MerkleTree {
+    /// Constructs a MerkleTree from the given input
     pub fn construct_by_input(input: &[Data]) -> Self {
         let input = pair_off_tree(input);
         let levels = input.len().trailing_zeros() as usize;
