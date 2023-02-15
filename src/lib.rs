@@ -12,6 +12,7 @@ pub struct MerkleTree {
 #[derive(Debug, PartialEq)]
 pub enum Error {
     InvalidLeafIndex,
+    InvalidData,
 }
 
 impl MerkleTree {
@@ -73,7 +74,7 @@ impl MerkleTree {
             .iter()
             .position(|leaf| leaf == &data_hashed)
             .map(|index| self.get_merkle_proof_by_leaf_index(index))
-            .unwrap_or(Err(Error::InvalidLeafIndex))
+            .unwrap_or(Err(Error::InvalidData))
     }
 
     /// Get number of leaves in the MerkleTree
