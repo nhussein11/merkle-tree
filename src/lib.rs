@@ -9,6 +9,11 @@ pub struct MerkleTree {
     levels: usize,
 }
 
+#[derive(Debug)]
+pub enum Error {
+    InvalidLeafIndex,
+}
+
 impl MerkleTree {
     /// Constructs a MerkleTree from the given input
     pub fn construct_by_input(input: &[Data]) -> Self {
@@ -37,6 +42,7 @@ impl MerkleTree {
             levels
         }
     }
+    
     /// Check if the given data produces the given root hash
     pub fn verify(input: &[Data], root: Hash) -> bool {
         let merkle_tree = MerkleTree::construct_by_input(input);
@@ -48,12 +54,37 @@ impl MerkleTree {
         self.nodes.last().unwrap().clone()
     }
 
-    pub fn get_merkle_proof_by_leaf_index(index: usize) -> bool {
+    /// Returns the merkle proof for the given leaf index
+    pub fn get_merkle_proof_by_leaf_index(&self, index: usize) -> Result<Vec<Hash>, Error> {
+        if index >= self.get_number_of_leaves() {
+            return Err(Error::InvalidLeafIndex);
+        }
+
+        let mut proof = Vec::new();
+        let mut index = index;
+
+        for level in 0..self.levels {
+            let sibling_index = if index % 2 == 0 {
+                index + 1
+            } else {
+                index - 1
+            };
+
+            proof.push(self.nodes[sibling_index].clone());
+            index = index / 2;
+        }
+
+        Ok(proof)
+    }
+
+    /// Returns the merkle proof for the given data
+    pub fn get_merkle_proof_by_data(data: Hash) {
         todo!()
     }
 
-    pub fn get_merkle_proof_by_data(data: Hash) {
-        todo!()
+    /// Get number of leaves in the MerkleTree
+    pub fn get_number_of_leaves(&self) -> usize {
+        2i32.pow(self.levels as u32).try_into().unwrap()
     }
 }
 
@@ -86,3 +117,4 @@ fn concatenate_hashes(left: Hash, right: Hash) -> Hash {
     let parent_hash = [left, right].concat();
     hash_data(&parent_hash)
 }
+
