@@ -39,12 +39,13 @@ impl MerkleTree {
     }
     /// Check if the given data produces the given root hash
     pub fn verify(input: &[Data], root: Hash) -> bool {
-        todo!()
+        let merkle_tree = MerkleTree::construct_by_input(input);
+        merkle_tree.root_hash() == root
     }
 
     /// Returns the root hash of the MerkleTree
     pub fn root_hash(&self) -> Hash {
-        todo!()
+        self.nodes.last().unwrap().clone()
     }
 
     pub fn get_merkle_proof_by_leaf_index(index: usize) -> bool {
