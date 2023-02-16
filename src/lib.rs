@@ -71,24 +71,23 @@ impl MerkleTree {
         self.nodes.last().unwrap().hash.clone()
     }
 
-//    /// Returns the merkle proof for the given leaf index
-//    pub fn get_merkle_proof_by_leaf_index(&self, index: usize) -> Result<Vec<Hash>, Error> {
-//        if index >= self.get_number_of_leaves() {
-//            return Err(Error::InvalidLeafIndex);
-//        }
-//
-//        let mut proof = Vec::new();
-//        let mut index = index;
-//
-//        for level in 0..self.levels {
-//            let sibling_index = if index % 2 == 0 { index + 1 } else { index - 1 };
-//
-//            proof.push(self.nodes[sibling_index].clone());
-//            index = index / 2;
-//        }
-//
-//        Ok(proof)
-//    }
+    /// Returns the merkle proof for the given leaf index
+    pub fn get_merkle_proof_by_leaf_index(&self, index: usize) -> Result<Hash, Error> {
+        if index >= self.get_number_of_leaves() {
+            return Err(Error::InvalidLeafIndex);
+        }
+       
+        let mut current_node = &self.nodes[index];
+        let mut proof = current_node.hash.clone();
+
+        while let Some(parent) = &current_node.parent {
+            // TODO: check sibling logic
+        }
+          
+      
+        Ok(proof)
+ 
+    }
 //
 //    /// Returns the merkle proof for the given data
 //    pub fn get_merkle_proof_by_data(&self, data: Hash) -> Result<Vec<Hash>, Error> {
@@ -100,15 +99,20 @@ impl MerkleTree {
 //            .unwrap_or(Err(Error::InvalidData))
 //    }
 //
-//    /// Get number of leaves in the MerkleTree
-//    pub fn get_number_of_leaves(&self) -> usize {
-//        2i32.pow(self.levels as u32).try_into().unwrap()
-//    }
-//
-//    /// Get leaves of the MerkleTree
-//    pub fn leaves(&self) -> &[Hash] {
-//        &self.nodes[0..self.get_number_of_leaves()]
-//    }
+    /// Get number of leaves in the MerkleTree
+    pub fn get_number_of_leaves(&self) -> usize {
+        self.nodes.len() / 2 + 1
+    }
+
+    /// Get leaves of the MerkleTree
+    pub fn leaves(&self) -> &[MerkleNode] {
+       &self.nodes[0..self.get_number_of_leaves()]
+    }
+
+    /// Get levels of the MerkleTree
+    pub fn levels(&self) -> usize {
+        self.nodes.len().trailing_zeros() as usize
+    }
 }
 
 /// Helper functions
@@ -142,6 +146,7 @@ fn concatenate_and_hash(left: Hash, right: Hash) -> Hash {
     let parent_hash = format!("{}{}", left, right).into_bytes();
     hash_data(&parent_hash)
 }
+// TODO: Implement this fn into MerkleNode methods!
 /// Update child node to point to parent
 fn update_child_node(child: &mut MerkleNode, parent: MerkleNode) {
     child.parent = Some(Rc::new(RefCell::new(parent)));
