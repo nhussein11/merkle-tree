@@ -1,11 +1,10 @@
-use sha2::Digest;
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash as StdHash, Hasher};
 
-
-mod tests;
-pub type Data = Vec<u8>;
-pub type Hash = Vec<u8>;
+mod tests; pub type Data = Vec<u8>;
+pub type Hash = String;
 
 #[derive(Debug)]
 pub struct MerkleTree {
@@ -132,13 +131,15 @@ fn pair_off_tree(input: &[Data]) -> Vec<Data> {
         }
     }
 }
-/// Hashes the given data using sha256
+/// Hashes the given data using Hash from std
 fn hash_data(data: &Data) -> Hash {
-    sha2::Sha256::digest(data).to_vec()
+    let mut hasher = DefaultHasher::new();
+    data.hash(&mut hasher);
+    hasher.finish().to_string()
 }
 /// Concatenates the given hashes and returns the hash of the concatenated data
 fn concatenate_and_hash(left: Hash, right: Hash) -> Hash {
-    let parent_hash = [left, right].concat();
+    let parent_hash = format!("{}{}", left, right).into_bytes();
     hash_data(&parent_hash)
 }
 /// Update child node to point to parent
