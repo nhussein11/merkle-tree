@@ -27,7 +27,7 @@ mod tests {
         ];
 
         let merkle_tree = MerkleTree::construct_by_input(&items);
-        
+
         // The Merkle tree should have 8 leaves (5 original + 3 pad), 6 (4+2) internal nodes and 1 root node (8 + 6 + 1 = 13)
         assert_eq!(merkle_tree.nodes.len(), 15);
     }

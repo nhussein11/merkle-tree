@@ -1,9 +1,10 @@
 use std::cell::RefCell;
-use std::rc::Rc;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash as StdHash, Hasher};
+use std::rc::Rc;
 
-mod tests; pub type Data = Vec<u8>;
+mod tests;
+pub type Data = Vec<u8>;
 pub type Hash = String;
 
 #[derive(Debug)]
@@ -14,9 +15,8 @@ pub struct MerkleTree {
 #[derive(Debug, Clone)]
 pub struct MerkleNode {
     parent: Option<Rc<RefCell<MerkleNode>>>,
-    hash : Hash,
-} 
-
+    hash: Hash,
+}
 
 #[derive(Debug, PartialEq)]
 pub enum Error {
@@ -30,32 +30,36 @@ impl MerkleTree {
         let input = pair_off_tree(input);
         let levels = input.len().trailing_zeros() as usize;
 
-        
-        let mut nodes : Vec<MerkleNode> = input
-                .iter()
-                .map(|leaf| MerkleNode{parent: None, hash: hash_data(leaf)})
-                .collect::<Vec<MerkleNode>>();
+        let mut nodes: Vec<MerkleNode> = input
+            .iter()
+            .map(|leaf| MerkleNode {
+                parent: None,
+                hash: hash_data(leaf),
+            })
+            .collect::<Vec<MerkleNode>>();
 
         let mut nodes_level = nodes.clone();
 
         for level in 0..levels {
-             nodes_level.chunks(2).for_each(|chunk| {
+            nodes_level.chunks(2).for_each(|chunk| {
                 let mut left_child = chunk[0].clone();
                 let mut right_child = chunk[1].clone();
-            
-                let parent_hash = concatenate_and_hash(left_child.clone().hash, right_child.clone().hash);
-                let parent = MerkleNode{parent: None, hash: parent_hash};
-            
+
+                let parent_hash =
+                    concatenate_and_hash(left_child.clone().hash, right_child.clone().hash);
+                let parent = MerkleNode {
+                    parent: None,
+                    hash: parent_hash,
+                };
+
                 update_child_node(&mut left_child, parent.clone());
                 update_child_node(&mut right_child, parent.clone());
-                
+
                 nodes.push(parent);
             });
 
             nodes_level = nodes[nodes.len() - nodes_level.len() / 2..].to_vec();
         }
-
-        println!("Nodes: {:?}", nodes);
 
         MerkleTree { nodes }
     }
@@ -76,29 +80,27 @@ impl MerkleTree {
         if index >= self.get_number_of_leaves() {
             return Err(Error::InvalidLeafIndex);
         }
-       
+
         let mut current_node = &self.nodes[index];
         let mut proof = current_node.hash.clone();
 
         while let Some(parent) = &current_node.parent {
             // TODO: check sibling logic
         }
-          
-      
+
         Ok(proof)
- 
     }
-//
-//    /// Returns the merkle proof for the given data
-//    pub fn get_merkle_proof_by_data(&self, data: Hash) -> Result<Vec<Hash>, Error> {
-//        let data_hashed = hash_data(&data);
-//        self.leaves()
-//            .iter()
-//            .position(|leaf| leaf == &data_hashed)
-//            .map(|index| self.get_merkle_proof_by_leaf_index(index))
-//            .unwrap_or(Err(Error::InvalidData))
-//    }
-//
+    //
+    //    /// Returns the merkle proof for the given data
+    //    pub fn get_merkle_proof_by_data(&self, data: Hash) -> Result<Vec<Hash>, Error> {
+    //        let data_hashed = hash_data(&data);
+    //        self.leaves()
+    //            .iter()
+    //            .position(|leaf| leaf == &data_hashed)
+    //            .map(|index| self.get_merkle_proof_by_leaf_index(index))
+    //            .unwrap_or(Err(Error::InvalidData))
+    //    }
+    //
     /// Get number of leaves in the MerkleTree
     pub fn get_number_of_leaves(&self) -> usize {
         self.nodes.len() / 2 + 1
@@ -106,7 +108,7 @@ impl MerkleTree {
 
     /// Get leaves of the MerkleTree
     pub fn leaves(&self) -> &[MerkleNode] {
-       &self.nodes[0..self.get_number_of_leaves()]
+        &self.nodes[0..self.get_number_of_leaves()]
     }
 
     /// Get levels of the MerkleTree
