@@ -1,13 +1,21 @@
 use sha2::Digest;
+use std::cell::RefCell;
+use std::rc::Rc;
+
 
 mod tests;
 pub type Data = Vec<u8>;
 pub type Hash = Vec<u8>;
 
 pub struct MerkleTree {
-    nodes: Vec<Hash>,
-    levels: usize,
+    nodes: Vec<MerkleNode>,
 }
+
+pub struct MerkleNode {
+    parent: Option<Rc<RefCell<MerkleNode>>>,
+    hash : Hash,
+} 
+
 
 #[derive(Debug, PartialEq)]
 pub enum Error {
