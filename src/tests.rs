@@ -12,27 +12,25 @@ mod tests {
         ];
 
         let merkle_tree = MerkleTree::construct_by_input(&items);
-       
-
-        // TODO: write correct assertions
-        assert!(!true);
+        // The Merkle tree should have 4 leaves (3 original + 1 pad), 2 internal nodes and 1 root node (4 + 2 + 1 = 7)
+        assert_eq!(merkle_tree.nodes.len(), 7);
     }
 
-    //#[test]
-    //fn create_three_levels_merkle_tree() {
-    //    let items = vec![
-    //        String::from("a").into_bytes(),
-    //        String::from("b").into_bytes(),
-    //        String::from("c").into_bytes(),
-    //        String::from("d").into_bytes(),
-    //        String::from("e").into_bytes(),
-    //    ];
+    #[test]
+    fn create_three_levels_merkle_tree() {
+        let items = vec![
+            String::from("a").into_bytes(),
+            String::from("b").into_bytes(),
+            String::from("c").into_bytes(),
+            String::from("d").into_bytes(),
+            String::from("e").into_bytes(),
+        ];
 
-    //    let merkle_tree = MerkleTree::construct_by_input(&items);
-
-    //    assert_eq!(merkle_tree.levels, 3);
-    //    assert_eq!(merkle_tree.nodes.len(), 15);
-    //}
+        let merkle_tree = MerkleTree::construct_by_input(&items);
+        
+        // The Merkle tree should have 8 leaves (5 original + 3 pad), 4 internal nodes and 1 root node (8 + 4 + 1 = 13)
+        assert_eq!(merkle_tree.nodes.len(), 13);
+    }
 
     //#[test]
     //fn verify_merkle_tree() {
