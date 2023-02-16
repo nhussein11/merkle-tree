@@ -48,7 +48,7 @@ impl MerkleTree {
             
                 update_child_node(&mut left_child, parent.clone());
                 update_child_node(&mut right_child, parent.clone());
-
+                
                 nodes.push(parent);
             });
 
@@ -60,17 +60,17 @@ impl MerkleTree {
         MerkleTree { nodes }
     }
 
-//    /// Check if the given data produces the given root hash
-//    pub fn verify(input: &[Data], root: Hash) -> bool {
-//        let merkle_tree = MerkleTree::construct_by_input(input);
-//        merkle_tree.root_hash() == root
-//    }
-//
-//    /// Returns the root hash of the MerkleTree
-//    pub fn root_hash(&self) -> Hash {
-//        self.nodes.last().unwrap().clone()
-//    }
-//
+    /// Check if the given data produces the given root hash
+    pub fn verify(input: &[Data], root: Hash) -> bool {
+        let merkle_tree = MerkleTree::construct_by_input(input);
+        merkle_tree.root_hash() == root
+    }
+
+    /// Returns the root hash of the MerkleTree
+    pub fn root_hash(&self) -> Hash {
+        self.nodes.last().unwrap().hash.clone()
+    }
+
 //    /// Returns the merkle proof for the given leaf index
 //    pub fn get_merkle_proof_by_leaf_index(&self, index: usize) -> Result<Vec<Hash>, Error> {
 //        if index >= self.get_number_of_leaves() {
