@@ -142,10 +142,6 @@ impl MerkleNode {
 }
 
 /// Helper functions
-/// Checks if the given number is power of two
-fn is_power_of_two(n: usize) -> bool {
-    n != 0 && n & (n - 1) == 0
-}
 /// Pads the input with empty data to make it power of two
 fn pair_off_tree(input: &[Data]) -> Vec<Data> {
     match input.len().is_power_of_two() {
