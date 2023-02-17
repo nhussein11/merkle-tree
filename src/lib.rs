@@ -85,38 +85,45 @@ impl MerkleTree {
         let mut proof = current_node.hash.clone();
 
         while let Some(parent) = &current_node.parent {
-            let current_node_index = self.nodes.iter().position(|node| node == current_node).unwrap();  
+            let current_node_index = self
+                .nodes
+                .iter()
+                .position(|node| node == current_node)
+                .unwrap();
             let sibling_index = if current_node_index % 2 == 0 {
                 current_node_index + 1
             } else {
                 current_node_index - 1
             };
 
+            let node = &self.nodes[current_node_index];
             let sibling = &self.nodes[sibling_index];
-            proof = concatenate_and_hash(proof, sibling.hash.clone());
+            proof = concatenate_and_hash(node.hash.clone(), sibling.hash.clone());
 
-            // Get parent index
-            let parent_index = self.nodes.iter()
+            println!("proof: {}", proof);
+            let parent_index = self
+                .nodes
+                .iter()
                 .position(|node| node.hash == parent.borrow().hash)
                 .unwrap();
-            
-            current_node = &self.nodes[parent_index];
-            
-        }
 
+            current_node = &self.nodes[parent_index];
+        }
+        // TODO: check why is not working
+        println!("proof: {}", proof);
         Ok(proof)
     }
-    //
-    //    /// Returns the merkle proof for the given data
-    //    pub fn get_merkle_proof_by_data(&self, data: Hash) -> Result<Vec<Hash>, Error> {
-    //        let data_hashed = hash_data(&data);
-    //        self.leaves()
-    //            .iter()
-    //            .position(|leaf| leaf == &data_hashed)
-    //            .map(|index| self.get_merkle_proof_by_leaf_index(index))
-    //            .unwrap_or(Err(Error::InvalidData))
-    //    }
-    //
+
+    /// Returns the merkle proof for the given data
+    pub fn get_merkle_proof_by_data(&self, data: Data) -> Result<Hash, Error> {
+        let data_hashed = hash_data(&data);
+        self.leaves()
+            .iter()
+            .position(|leaf| leaf.hash == data_hashed)
+            .map(|index| self.get_merkle_proof_by_leaf_index(index))
+            .unwrap_or(Err(Error::InvalidData))
+    }
+
     /// Get number of leaves in the MerkleTree
     pub fn get_number_of_leaves(&self) -> usize {
         self.nodes.len() / 2 + 1

@@ -47,40 +47,39 @@ mod tests {
         assert!(MerkleTree::verify(&items, merkle_tree.root_hash()));
     }
 
-    //#[test]
-    //fn verify_merkle_tree_should_fail() {
-    //    let items = vec![
-    //        String::from("a").into_bytes(),
-    //        String::from("b").into_bytes(),
-    //        String::from("c").into_bytes(),
-    //        String::from("d").into_bytes(),
-    //        String::from("e").into_bytes(),
-    //    ];
+    #[test]
+    fn verify_merkle_tree_should_fail() {
+        let items = vec![
+            String::from("a").into_bytes(),
+            String::from("b").into_bytes(),
+            String::from("c").into_bytes(),
+            String::from("d").into_bytes(),
+            String::from("e").into_bytes(),
+        ];
 
-    //    let merkle_tree = MerkleTree::construct_by_input(&items);
+        let merkle_tree = MerkleTree::construct_by_input(&items);
 
-    //    let mut items = items.clone();
-    //    items.push(String::from("f").into_bytes());
+        let mut items = items.clone();
+        items.push(String::from("f").into_bytes());
 
-    //    assert!(!MerkleTree::verify(&items, merkle_tree.root_hash()));
-    //}
+        assert!(!MerkleTree::verify(&items, merkle_tree.root_hash()));
+    }
 
-    //#[test]
-    //fn get_merkle_tree_proof_by_leave_index() {
-    //    let items = vec![
-    //        String::from("a").into_bytes(),
-    //        String::from("b").into_bytes(),
-    //        String::from("c").into_bytes(),
-    //        String::from("d").into_bytes(),
-    //        String::from("e").into_bytes(),
-    //    ];
+    #[test]
+    fn get_merkle_tree_proof_by_leave_index() {
+        let items = vec![
+            String::from("a").into_bytes(),
+            String::from("b").into_bytes(),
+            String::from("c").into_bytes(),
+            String::from("d").into_bytes(),
+            String::from("e").into_bytes(),
+        ];
 
-    //    let merkle_tree = MerkleTree::construct_by_input(&items);
+        let merkle_tree = MerkleTree::construct_by_input(&items);
+        let proof = merkle_tree.get_merkle_proof_by_leaf_index(3).unwrap();
 
-    //    let proof = merkle_tree.get_merkle_proof_by_leaf_index(0).unwrap();
-
-    //    assert_eq!(proof.len(), 3);
-    //}
+        assert_eq!(merkle_tree.root_hash(), proof);
+    }
 
     //#[test]
     //fn get_merkle_tree_proof_by_leave_index_should_fail() {
