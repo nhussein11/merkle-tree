@@ -12,7 +12,7 @@ pub struct MerkleTree {
     nodes: Vec<MerkleNode>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct MerkleNode {
     parent: Option<Rc<RefCell<MerkleNode>>>,
     hash: Hash,
@@ -85,7 +85,23 @@ impl MerkleTree {
         let mut proof = current_node.hash.clone();
 
         while let Some(parent) = &current_node.parent {
-            // TODO: check sibling logic
+            let current_node_index = self.nodes.iter().position(|node| node == current_node).unwrap();  
+            let sibling_index = if current_node_index % 2 == 0 {
+                current_node_index + 1
+            } else {
+                current_node_index - 1
+            };
+
+            let sibling = &self.nodes[sibling_index];
+            proof = concatenate_and_hash(proof, sibling.hash.clone());
+
+            // Get parent index
+            let parent_index = self.nodes.iter()
+                .position(|node| node.hash == parent.borrow().hash)
+                .unwrap();
+            
+            current_node = &self.nodes[parent_index];
+            
         }
 
         Ok(proof)
