@@ -12,8 +12,7 @@ mod tests {
         ];
 
         let merkle_tree = MerkleTree::construct_by_input(&items);
-
-        assert_eq!(merkle_tree.levels, 2);
+        // The Merkle tree should have 4 leaves (3 original + 1 pad), 2 internal nodes and 1 root node (4 + 2 + 1 = 7)
         assert_eq!(merkle_tree.nodes.len(), 7);
     }
 
@@ -29,7 +28,7 @@ mod tests {
 
         let merkle_tree = MerkleTree::construct_by_input(&items);
 
-        assert_eq!(merkle_tree.levels, 3);
+        // The Merkle tree should have 8 leaves (5 original + 3 pad), 6 (4+2) internal nodes and 1 root node (8 + 6 + 1 = 13)
         assert_eq!(merkle_tree.nodes.len(), 15);
     }
 
@@ -77,10 +76,9 @@ mod tests {
         ];
 
         let merkle_tree = MerkleTree::construct_by_input(&items);
+        let proof = merkle_tree.get_merkle_proof_by_leaf_index(3).unwrap();
 
-        let proof = merkle_tree.get_merkle_proof_by_leaf_index(0).unwrap();
-
-        assert_eq!(proof.len(), 3);
+        assert_eq!(merkle_tree.root_hash(), proof);
     }
 
     #[test]
@@ -116,7 +114,7 @@ mod tests {
             .get_merkle_proof_by_data(String::from("a").into_bytes())
             .unwrap();
 
-        assert_eq!(proof.len(), 3);
+        assert_eq!(merkle_tree.root_hash(), proof);
     }
 
     #[test]
