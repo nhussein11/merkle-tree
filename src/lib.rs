@@ -40,7 +40,7 @@ impl MerkleTree {
 
         let mut nodes_level = nodes.clone();
 
-        for level in 0..levels {
+        for _level in 0..levels {
             nodes_level.chunks_mut(2).for_each(|chunk| {
                 let parent_hash = concatenate_and_hash(&chunk[0].hash, &chunk[1].hash);
 
