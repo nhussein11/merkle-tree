@@ -41,23 +41,22 @@ impl MerkleTree {
         let mut nodes_level = nodes.clone();
 
         for level in 0..levels {
-            nodes_level.chunks(2).for_each(|chunk| {
-                let mut left_child = chunk[0].clone();
-                let mut right_child = chunk[1].clone();
+            nodes_level.chunks_mut(2).for_each(|chunk| {
+                let parent_hash = concatenate_and_hash(&chunk[0].hash, &chunk[1].hash);
 
-                let parent_hash =
-                    concatenate_and_hash(left_child.clone().hash, right_child.clone().hash);
                 let parent = MerkleNode {
                     parent: None,
                     hash: parent_hash,
                 };
 
-                update_child_node(&mut left_child, parent.clone());
-                update_child_node(&mut right_child, parent.clone());
+                nodes.push(parent.clone());
 
-                nodes.push(parent);
+                let left_child_position = get_node_index(&nodes, &chunk[0].hash).unwrap();
+                let right_child_position = get_node_index(&nodes, &chunk[1].hash).unwrap();
+
+                nodes[left_child_position].update_parent(&parent);
+                nodes[right_child_position].update_parent(&parent);
             });
-
             nodes_level = nodes[nodes.len() - nodes_level.len() / 2..].to_vec();
         }
 
@@ -85,11 +84,8 @@ impl MerkleTree {
         let mut proof = current_node.hash.clone();
 
         while let Some(parent) = &current_node.parent {
-            let current_node_index = self
-                .nodes
-                .iter()
-                .position(|node| node == current_node)
-                .unwrap();
+            let current_node_index = get_node_index(&self.nodes, &current_node.hash).unwrap();
+
             let sibling_index = if current_node_index % 2 == 0 {
                 current_node_index + 1
             } else {
@@ -98,19 +94,13 @@ impl MerkleTree {
 
             let node = &self.nodes[current_node_index];
             let sibling = &self.nodes[sibling_index];
-            proof = concatenate_and_hash(node.hash.clone(), sibling.hash.clone());
+            proof = concatenate_and_hash(&node.hash, &sibling.hash);
 
-            println!("proof: {}", proof);
-            let parent_index = self
-                .nodes
-                .iter()
-                .position(|node| node.hash == parent.borrow().hash)
-                .unwrap();
+            let parent_index = get_node_index(&self.nodes, &parent.borrow().hash).unwrap();
 
             current_node = &self.nodes[parent_index];
         }
-        // TODO: check why is not working
-        println!("proof: {}", proof);
+
         Ok(proof)
     }
 
@@ -137,6 +127,17 @@ impl MerkleTree {
     /// Get levels of the MerkleTree
     pub fn levels(&self) -> usize {
         self.nodes.len().trailing_zeros() as usize
+    }
+
+    /// Get node index of the given hash
+    pub fn get_node_index(&self, hash: Hash) -> Option<usize> {
+        self.nodes.iter().position(|node| node.hash == hash)
+    }
+}
+
+impl MerkleNode {
+    fn update_parent(&mut self, parent: &MerkleNode) {
+        self.parent = Some(Rc::new(RefCell::new(parent.clone())));
     }
 }
 
@@ -167,12 +168,11 @@ fn hash_data(data: &Data) -> Hash {
     hasher.finish().to_string()
 }
 /// Concatenates the given hashes and returns the hash of the concatenated data
-fn concatenate_and_hash(left: Hash, right: Hash) -> Hash {
+fn concatenate_and_hash(left: &Hash, right: &Hash) -> Hash {
     let parent_hash = format!("{}{}", left, right).into_bytes();
     hash_data(&parent_hash)
 }
-// TODO: Implement this fn into MerkleNode methods!
-/// Update child node to point to parent
-fn update_child_node(child: &mut MerkleNode, parent: MerkleNode) {
-    child.parent = Some(Rc::new(RefCell::new(parent)));
+/// Get node index of the given hash
+fn get_node_index(nodes: &[MerkleNode], hash: &Hash) -> Option<usize> {
+    nodes.iter().position(|node| node.hash == *hash)
 }
