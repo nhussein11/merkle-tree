@@ -4,9 +4,9 @@ A merkle tree is a data structure that allows you to verify the integrity of a l
 
 ![Merkle tree example](https://www.forex.academy/wp-content/uploads/2020/05/Merkle-Tree-FA.jpg)
 
-The idea of this project is just to implement a simple version of a merkle tree in Rust. Anyway, if you want to learn more about merkle trees, I highly recommend you to read this [Wikipedia article](https://en.wikipedia.org/wiki/Merkle_tree) and also [Simplilearn Article](https://www.simplilearn.com/tutorials/blockchain-tutorial/merkle-tree-in-blockchain#:~:text=Merkle%20trees%2C%20also%20known%20as,data%20more%20efficiently%20and%20securely.). 
+The idea of this project is just to implement a simple version of a merkle tree in Rust. Anyway, if you want to learn more about merkle trees, I highly recommend you to read this [Wikipedia article](https://en.wikipedia.org/wiki/Merkle_tree) and also [Simplilearn Article](https://www.simplilearn.com/tutorials/blockchain-tutorial/merkle-tree-in-blockchain#:~:text=Merkle%20trees%2C%20also%20known%20as,data%20more%20efficiently%20and%20securely.).
 
-:rocket: Or even better, if you want to contribute to this humble implementation, feel free to make a pull request. :rocket:
+:rocket: Or even better, if you want to contribute to this humble implementation, feel free to open a pull request. :rocket:
 
 ## Why it is important?
 
@@ -18,25 +18,24 @@ Each item in the set is hashed and stored in a leaf node. The leaf nodes are the
 
 A Merkle tree totals all transactions in a block and generates a digital fingerprint of the entire set of operations, allowing the user to verify whether it includes a transaction in the block.
 
-
 <p align="center">
   <img src="https://www.simplilearn.com/ice9/free_resources_article_thumb/Merkle_Tree_In_Blockchain_4.png" />
 </p>
 
-
 ## How to run the tests?
 
-I wrote a suite of unit tests to test the merkle tree. 
+I wrote a suite of unit tests to test the merkle tree.
 
 To run the tests, run the following command:
 
 1 - Clone the project:
+
 ```bash
 git clone https://github.com/nhussein11/merkle-tree.git
 ```
 
 2 - Run the tests:
+
 ```bash
 cargo test
 ```
-
